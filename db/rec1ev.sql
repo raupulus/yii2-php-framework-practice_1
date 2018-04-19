@@ -1,9 +1,10 @@
 DROP TABLE IF EXISTS usuarios CASCADE;
 CREATE TABLE usuarios
 (
-    id       BIGSERIAL    PRIMARY KEY
-  , nombre   VARCHAR(255) NOT NULL UNIQUE
-  , password CHAR(64)
+    id         BIGSERIAL    PRIMARY KEY
+  , n_paciente char(5)      NOT NULL UNIQUE
+  , nombre     VARCHAR(255) NOT NULL
+  , password   CHAR(64)
 );
 
 DROP TABLE IF EXISTS citas CASCADE;
@@ -16,10 +17,9 @@ CREATE TABLE citas
                          ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
-INSERT INTO usuarios (nombre, password) VALUES
-    ('pepe', 'pepe')
-  , ('ana', 'ana')
+INSERT INTO usuarios (n_paciente, nombre, password) VALUES
+    ('A0001', 'pepe', 'pepe')
+  , ('A0002', 'ana', 'ana')
 ;
 
 INSERT INTO citas (fecha, hora, usuario_id) VALUES
