@@ -4,7 +4,7 @@ CREATE TABLE usuarios
     id         BIGSERIAL    PRIMARY KEY
   , n_paciente char(5)      NOT NULL UNIQUE
   , nombre     VARCHAR(255) NOT NULL
-  , password   CHAR(64)
+  , password   VARCHAR(255)
 );
 
 DROP TABLE IF EXISTS citas CASCADE;
@@ -18,8 +18,8 @@ CREATE TABLE citas
 );
 
 INSERT INTO usuarios (n_paciente, nombre, password) VALUES
-    ('A0001', 'pepe', 'pepe')
-  , ('A0002', 'ana', 'ana')
+    ('A0000', 'pepe', crypt('pepe', gen_salt('bf', 13)))
+  , ('A0001', 'ana', crypt('ana', gen_salt('bf', 13)))
 ;
 
 INSERT INTO citas (fecha, hora, usuario_id) VALUES
