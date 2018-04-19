@@ -17,3 +17,12 @@ CREATE TABLE citas
 );
 
 
+INSERT INTO usuarios (nombre, password) VALUES
+    ('pepe', 'pepe')
+  , ('ana', 'ana')
+;
+
+INSERT INTO citas (fecha, hora, usuario_id) VALUES
+    ('2019-01-01', '13:20:00', 1)
+  , ('2019-02-01', '16:44:00', 2)
+;
