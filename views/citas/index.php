@@ -16,19 +16,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Citas', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Nueva Cita', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'fecha',
-            'hora',
-            'usuario_id',
+            'fecha:date',
+            'hora:time',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
