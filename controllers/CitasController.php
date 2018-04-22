@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use function var_dump;
 use Yii;
 use app\models\Citas;
 use app\models\CitasSearch;
@@ -76,10 +77,24 @@ class CitasController extends Controller
      */
     public function actionCreate()
     {
+        $citas = Citas::find()->where([
+            'usuario_id' => $this->user->id,
+        ])->count();
+
+        if ($citas >= 1) {
+            Yii::$app->session->setFlash(
+                'error',
+                'Solo puedes tener 1 cita pendiente de asistencia, por favor 
+                cancela la cita existente primero'
+            );
+            return $this->redirect(['index']);
+        }
+        //var_dump($citas);die();
+
         $model = new Citas();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
