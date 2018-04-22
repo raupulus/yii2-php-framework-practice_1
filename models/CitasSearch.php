@@ -57,12 +57,16 @@ class CitasSearch extends Citas
             return $dataProvider;
         }
 
+        // Filtro añadido para solo mostrar las citas del usuario logueado
+        $query->andWhere([
+            'usuario_id' => Yii::$app->user->id,
+        ]);
+
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'fecha' => $this->fecha,
             'hora' => $this->hora,
-            'usuario_id' => $this->usuario_id,
         ]);
 
         return $dataProvider;
