@@ -23,17 +23,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div>
         <?php
-        $model = Citas::citaPendiente()->one();
+        $pendiente = Citas::citaPendiente()->one();
         ?>
 
-        <?php if ($model): ?>
+        <?php if ($pendiente): ?>
         <h3>Cita pendiente</h3>
 
         <?= DetailView::widget([
-            'model' => $model,
+            'model' => $pendiente,
             'attributes' => [
-                'fecha',
-                'hora',
+                'fecha:date',
+                'hora:time',
+            ],
+        ]) ?>
+
+        <?= Html::a('Eliminar cita pendiente', [
+            'delete',
+            'id' => $pendiente->id
+        ],
+        [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => '¿Estás seguro que quieres eliminar esta cita?',
+                'method' => 'post',
             ],
         ]) ?>
 
@@ -47,12 +59,18 @@ $this->params['breadcrumbs'][] = $this->title;
         <h3>Citas del pasado</h3>
     </div>
 
+    <?php
+        /* Filtro los anteriores a hoy */
+        $dataProvider->query->andFilterWhere([
+            '<=', 'fecha', (new DateTime('now'))->format('Y/m/d'),
+        ]);
+    ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             'fecha:date',
             'hora:time',
-            //['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 </div>
