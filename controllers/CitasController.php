@@ -81,10 +81,15 @@ class CitasController extends Controller
     {
         $citas = Citas::find();
         $usuario_id = Yii::$app->user->id;
+        $hoy = new DateTime('now');
 
         $n_citas = $citas->where([
             'usuario_id' => $usuario_id,
-        ])->count();
+        ])
+        ->andWhere([
+            '>=', 'fecha', $hoy->format('Y/m/d'),
+        ])
+        ->count();
 
         /* Si tiene una cita devuelve un mensaje y devuelve a citas/index */
         if ($n_citas >= 1) {
@@ -109,11 +114,13 @@ class CitasController extends Controller
             '00'
         );
 
-        $horas_validas = range(10, 21);
-        $minutos_validos = [00, 15, 30, 45];
-        
+        /* Creo intervalo de tiempo (En principio no necesario)*/
+        //$horas_validas = range(10, 21);
+        //$minutos_validos = [00, 15, 30, 45];
+
+
         // Si la última reserva es anterior a hoy se da mañana a las 10:00
-        $hoy = new DateTime('now');
+
         if ($hoy >= $fecha_ultima) {
             $fecha = $hoy->modify('+1 day')->format('Y/m/d');
             $hora = '10:00:00';
@@ -125,11 +132,10 @@ class CitasController extends Controller
                          ->format('Y/m/d');
                 $hora = '10:00:00';
             } else {
-
+                $fecha = $fecha_ultima->format('Y/m/d');  // YYYY/MM/DD
+                $hora = $fecha_ultima->modify('+15 min')
+                        ->format('H:i:s');  // HH:MM:SS
             }
-            //$fecha = $ultima_cita->fecha;
-            //$hora = $hora_hoy;
-            //var_dump($ultima_cita);die();
         }
 
 
