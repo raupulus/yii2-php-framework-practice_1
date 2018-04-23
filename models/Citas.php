@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use DateTime;
 use Yii;
 
 /**
@@ -57,5 +58,25 @@ class Citas extends \yii\db\ActiveRecord
     public function getUsuario()
     {
         return $this->hasOne(Usuarios::className(), ['id' => 'usuario_id']);
+    }
+
+    public function getCitasPasado() {
+
+    }
+
+    public static function citaPendiente() {
+        $cita = Citas::find();
+        $usuario_id = Yii::$app->user->id;
+        $hoy = new DateTime('now');
+
+        $cita->where([
+            'usuario_id' => $usuario_id,
+        ])
+        ->andWhere([
+            '>=', 'fecha', $hoy->format('Y/m/d'),
+        ])
+        ->one();
+
+        return $cita;
     }
 }
