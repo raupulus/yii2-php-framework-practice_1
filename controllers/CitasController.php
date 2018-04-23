@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use DateTime;
+use function range;
 use function var_dump;
 use Yii;
 use app\models\Citas;
@@ -77,11 +79,15 @@ class CitasController extends Controller
      */
     public function actionCreate()
     {
-        $citas = Citas::find()->where([
-            'usuario_id' => $this->user->id,
+        $citas = Citas::find();
+        $usuario_id = Yii::$app->user->id;
+
+        $n_citas = $citas->where([
+            'usuario_id' => $usuario_id,
         ])->count();
 
-        if ($citas >= 1) {
+        /* Si tiene una cita devuelve un mensaje y devuelve a citas/index */
+        if ($n_citas >= 1) {
             Yii::$app->session->setFlash(
                 'error',
                 'Solo puedes tener 1 cita pendiente de asistencia, por favor 
@@ -89,9 +95,49 @@ class CitasController extends Controller
             );
             return $this->redirect(['index']);
         }
-        //var_dump($citas);die();
 
-        $model = new Citas();
+        /* Busco la última cita */
+        $ultima_cita = Citas::find()->orderBy(
+            'fecha DESC, hora DESC'
+        )->one();
+
+        /* Creo DateTime con la última fecha y hora */
+        $fecha_ultima = new DateTime($ultima_cita->fecha);
+        $fecha_ultima->setTime(
+            date('H', strtotime($ultima_cita->hora)),
+            date('i', strtotime($ultima_cita->hora)),
+            '00'
+        );
+
+        $horas_validas = range(10, 21);
+        $minutos_validos = [00, 15, 30, 45];
+        
+        // Si la última reserva es anterior a hoy se da mañana a las 10:00
+        $hoy = new DateTime('now');
+        if ($hoy >= $fecha_ultima) {
+            $fecha = $hoy->modify('+1 day')->format('Y/m/d');
+            $hora = '10:00:00';
+        } else {
+            /* A la fecha y hora de la última cita aumentar 15 min */
+            if ($ultima_cita->hora >= '20:45:00') {
+
+                $fecha = $fecha_ultima->modify('+1 day')
+                         ->format('Y/m/d');
+                $hora = '10:00:00';
+            } else {
+
+            }
+            //$fecha = $ultima_cita->fecha;
+            //$hora = $hora_hoy;
+            //var_dump($ultima_cita);die();
+        }
+
+
+        $model = new Citas([
+            'usuario_id' => $usuario_id,
+            'fecha' => $fecha,
+            'hora' => $hora,
+        ]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
